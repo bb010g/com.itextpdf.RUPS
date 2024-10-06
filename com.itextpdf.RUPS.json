@@ -11,13 +11,15 @@
         "--env=PATH=/app/jre/bin:/app/bin:/usr/bin",
         "--env=JAVA_HOME=/app/jre",
         "--env=JAVA=/app/jre/bin/java",
-        "--env=JAVA_TOOL_OPTIONS=-Djava.io.tmpdir=/var/tmp",
+        "--env=JAVA_TOOL_OPTIONS=-Djava.io.tmpdir=/var/tmp -Dswing.systemlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel",
         "--env=TMPDIR=/var/tmp",
         "--filesystem=/var/tmp",
+        "--device=dri",
         "--share=ipc",
         "--socket=x11",
         "--socket=pulseaudio",
         "--filesystem=home",
+        "--filesystem=xdg-config/gtk-3.0:ro",
         "--persist=.java"
     ],
     "modules": [
