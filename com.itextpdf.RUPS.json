@@ -41,31 +41,39 @@
         {
             "name": "rups",
             "buildsystem": "simple",
+            "build-options": {
+                "build-args": [
+                    "--share=network"
+                ],
+                "prepend-path": "/usr/lib/sdk/openjdk17/bin"
+            },
             "build-commands": [
                 "/usr/lib/sdk/openjdk17/install.sh",
+                "mvn -V -B -D skipTests=true verify",
                 "install -d /app/rups/",
-                "mv rups/* /app/rups/",
-                "install -Dm755 rups.sh /app/bin/rups"
+                "ls -lA target",
+                "install -Dm 644 -t /app/rups/ target/itext-rups-*.jar",
+                "install -Dm 755 rups.sh /app/bin/rups"
             ],
             "post-install": [
-                "for jar in /app/rups/itext-rups-*.jar; do bsdtar -C rups -xf \"$jar\" 'com/itextpdf/rups/logo.png'; done",
+                "for jar in /app/rups/itext-rups-*.jar; do mkdir -p rups && bsdtar -C rups -xf \"$jar\" 'com/itextpdf/rups/logo.png'; done",
                 "desktop-file-install --dir=/app/share/applications com.itextpdf.RUPS.desktop",
                 "install -Dm644 com.itextpdf.RUPS.metainfo.xml /app/share/metainfo/com.itextpdf.RUPS.metainfo.xml",
                 "ffmpeg -i rups/com/itextpdf/rups/logo.png -filter:v 'scale=512:512:force_original_aspect_ratio=decrease,pad=512:512:-1:-1:color=0xFFFFFF00' -frames:v 1 -update 1 rups512x512.png",
-                "install -Dm644 rups512x512.png ${FLATPAK_DEST}/share/icons/hicolor/512x512/apps/com.itextpdf.RUPS.png"
+                "install -Dm 644 rups512x512.png ${FLATPAK_DEST}/share/icons/hicolor/512x512/apps/com.itextpdf.RUPS.png"
             ],
             "sources": [
                 {
-                    "type": "archive",
-                    "url": "https://github.com/itext/i7j-rups/releases/download/7.2.5/iText7-RUPS-7.2.5-only-jars.zip",
-                    "sha256": "509e81cbe629b331a80e9344a11fe573e6e4e065c4319c1532ac175da9af5dec",
-                    "dest": "rups",
-                    "x-checker-data": {
-                        "type": "json",
-                        "url": "https://api.github.com/repos/itext/i7j-rups/releases/latest",
-                        "version-query": ".tag_name",
-                        "url-query": ".assets[] | select(.name==\"iText7-RUPS-\" + $version + \"-only-jars.zip\") | .browser_download_url"
-                    }
+                    "type": "git",
+                    "url": "https://github.com/itext/i7j-rups.git",
+                    "branch": "develop"
+                },
+                {
+                    "type": "patch",
+                    "paths": [
+                        "patches/0001-build-Allow-skipping-tests.patch"
+                    ],
+                    "use-git": true
                 },
                 {
                     "type": "file",

@@ -1,0 +1,36 @@
+From def188aa1429e218aa8dbba1faf970fadce69945 Mon Sep 17 00:00:00 2001
+From: Dusk Banks <me@bb010g.com>
+Date: Sun, 6 Oct 2024 06:41:11 -0700
+Subject: [PATCH] build: Allow skipping tests
+
+When building in the Flatpak sandbox, X11 isn't available.
+---
+ pom.xml | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/pom.xml b/pom.xml
+index 5946533..7c63723 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -84,6 +84,9 @@
+ 
+     <!-- Test dependencies -->
+     <junit-jupiter-api.version>5.11.0</junit-jupiter-api.version>
++
++    <!-- Build configuration -->
++    <skipTests>false</skipTests>
+   </properties>
+ 
+   <dependencies>
+@@ -202,7 +205,7 @@
+         <artifactId>maven-surefire-plugin</artifactId>
+         <version>${maven-surefire-plugin.version}</version>
+         <configuration>
+-          <skipTests>false</skipTests>
++          <skipTests>${skipTests}</skipTests>
+           <argLine>@{jacoco.agent.argLine}</argLine>
+         </configuration>
+       </plugin>
+-- 
+2.46.2
+
